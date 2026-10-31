@@ -1,0 +1,11 @@
+# DRAFT API and job contracts
+
+`POST /v1/experiments` accepts authenticated JSON only after Slack signature verification at the ingress adapter. The adapter must never trust a user-supplied actor ID. Return `202` with `request_id`, `workflow_name`, and status URL; return structured `4xx` for invalid scope or quota. An idempotency key deduplicates retries. Cancellation is a separate authorized action.
+
+Required request fields: `schema_version`, `idempotency_key`, `dataset_ref` (immutable ID and SHA-256), `program_ref` (reviewed Git SHA), `optimizer` (allowlisted name and bounded parameters), `model_ref` (approved endpoint alias), `evaluation_ref` (held-out immutable ID and SHA-256), `limits` (max examples, calls, tokens, wall time, CPU, memory), `purpose`, and `requested_by` (derived by gateway). Reject unknown fields and unpinned `latest` references. Keep raw examples and credentials out of API responses and logs.
+
+The gateway creates a workflow with a scoped service account, namespace, resource limits, network policy, TTL, and explicit dataset/artifact access. The job must emit an artifact manifest containing request and workflow IDs, input hashes, code and DSPy version, model alias/version, optimizer settings, seed, metrics, sample counts, error counts, cost estimate/actual, trace reference, and output hash. Fail closed on missing evaluation, budget breach, or incomplete provenance. Treat a failed run as an artifact for audit, never as a promotion candidate.
+
+Promotion request: artifact hash, target environment, evaluation threshold version, baseline comparison, privacy review reference, owner approval identity/time, PR URL, and rollback reference. A gateway cannot approve its own result. The deployment repository stores only a reviewed pinned reference, never secret values or raw private examples.
+
+Trust boundaries: Slack ingress -> authenticated gateway -> workflow control plane -> isolated job/data/model endpoint -> artifact registry -> human approval -> Git review -> Argo CD. Keycloak OIDC signs humans into UIs; each API still checks authorization. Homepage is navigation only. ESO materializes scoped secrets from OpenBao per cluster, with no secret in this public repo.

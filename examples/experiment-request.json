@@ -1,0 +1,11 @@
+{
+  "schema_version": "1",
+  "idempotency_key": "synthetic-run-001",
+  "dataset_ref": {"id": "synthetic-training-v1", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+  "program_ref": {"git_sha": "1111111111111111111111111111111111111111"},
+  "optimizer": {"name": "allowlisted-example", "max_trials": 2},
+  "model_ref": "offline-fixture-only",
+  "evaluation_ref": {"id": "synthetic-heldout-v1", "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},
+  "limits": {"max_examples": 10, "max_calls": 0, "max_tokens": 0, "wall_seconds": 60, "cpu": "1", "memory": "1Gi"},
+  "purpose": "Documentation example; no execution"
+}
